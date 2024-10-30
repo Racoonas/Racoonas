@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Coverage Builder example</title>
+
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/unicons.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">    
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!-- MAIN STYLE -->
+    <link rel="stylesheet" href="css/tooplate-style.css">
+    
+  </head>
+  <body>
+
+    <!-- MENU -->
+    <nav class="navbar navbar-expand-sm navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="https://github.com/Racoonas"><i class='icon-github'></i> Dmytro Karunas</a>
+
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a href="index.html#about" class="nav-link"><span data-hover="Me">About</span></a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="index.html#resume" class="nav-link"><span data-hover="Skills">Experience</span></a>
+                    </li>                    
+                    <li class="nav-item">
+                        <a href="index.html#project" class="nav-link"><span data-hover="Real">Examples</span></a>
+                    </li>                    
+                    <li class="nav-item">
+                        <a href="index.html#contact" class="nav-link"><span data-hover="Info">Contact</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ARTICLE -->
+    <section class="about full-screen d-lg-flex justify-content-center align-items-center" id="about">
+        <div class="container">
+
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">                        
+                    <h1 class="animated animated-text">
+                        <span class="mr-2">Automation Priority Builder</span>                                
+                    </h1>
+                    <p> In this nerdy spreadsheets-heavy example I'll show how we prioritize test cases for the automation coverage</p>
+                    <h3> 1. We start with simple Assumptions: </h3>
+                      <p>
+                        Each Test Case should have properties: <br>
+                        ● 'System Area' as a main grouping characteristics. <br>
+                        ● 'Risk' for the application if test case fails. <br>
+                        ● 'Manual Effort' required when testing it. <br>
+                        ● 'Estimate' to turn it into auto-test.
+                      </p>
+                      <p>
+                        The simple idea behind this: <br>
+                        Tests having highest 'Risk' and 'Manual Efforts' but which are easier to cover are top prioritized, 
+                        since we consider them as a valuable low-hanging fruits.
+                      </p>                        
+                </div>               
+              </div>             
+            </div>
+
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">                                            
+                    <h3> 2. Export data </h3>
+                      <p>
+                        Test Cases exported into Google Spreadsheets. <br>
+                        That data is considered basis for further analysis.
+                      </p>                                           
+                </div>               
+              </div>              
+              <div class="col-lg-12 col-md-12 col-12">
+                  <div class="about-image svg">
+                      <img src="images/articles/prioritization/1.png" class="img-fluid">
+                  </div>
+               </div>
+            </div>
+
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">                                            
+                    <h3> 3. Create a ruleset </h3>
+                      <p>
+                        Combination of <b>System Risk</b> value and <b>Manual Effort</b> should then be considered by the team. <br>
+                        Subjectively, team assigns the <b>Automation Priority Result</b> to each combination. <br>
+                        This way we get a ruleset which can later be used to mark test cases. 
+                      </p>                                           
+                </div>
+                <div class="col-lg-6 col-md-6 col-6">                  
+                  <img src="images/articles/prioritization/2.png" class="img-fluid">
+                </div>
+              </div>              
+            </div>
+
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">                                            
+                    <h3> 4. Applying ruleset </h3>
+                      <p>
+                        Agreed ruleset is used to mark each test case. <br> 
+                        This is done with some wizardy around google spreadsheets formulas. 
+                        Mostly all work is done with INDEX() and MATCH() functions.
+                      </p>                                           
+                </div>                
+              </div> 
+              <div class="col-lg-12 col-md-12 col-12">
+                <img src="images/articles/prioritization/3.png" class="img-fluid">
+              </div>
+            </div>            
+
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">                                            
+                    <h3> 5. Grouping cases by the area </h3>
+                      <p>
+                        In the next step, we'll group the test cases by the System Area property. <br>
+                        This is done on a separate list. <br>
+                        We will use UNIQUE() function to get a list of all possible System Areas. 
+                        We will also count total number of cases in each group.
+                      </p>                                           
+                </div>
+                <div class="col-lg-6 col-md-6 col-6">                  
+                  <img src="images/articles/prioritization/4.png" class="img-fluid">
+                </div>
+              </div>              
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 6. Calculating other group parameters</h3>
+                      <p>
+                        Now that we have groups in place, we can also calculate some group-specific attributes. <br>
+                        Like number of test cases already covered, or the number of cases considered Highest/High/Medium/Low.
+                        We will also summarize the time needed to cover the whole area. <br>
+                        This work is mostly done with COUNTIF() and QUERY() functions.
+                      </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-12">
+                <img src="images/articles/prioritization/5.png" class="img-fluid">
+              </div>              
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 7. Applying Weights</h3>
+                      <p>
+                        Now this part is bit math-nerdy. <br>
+                        When calculating the total 'Rating' for the System Area, 
+                        we would like to have Highest and High test cases to have more weight, than Medium and Low.<br>
+                        That's why we apply <b>Weight Multipliers</b>:<br>
+                        ●   Highest = 0,7 <br>
+                        ●   High = 0,3 <br>
+                        ●   Medium = 0,1 <br>
+                        ●   Low = 0,05 <br>                        
+                      </p>
+                      <p>
+                        Now the only thing left is to divide the weighed System Area rating by the time needed to cover it with test cases. <br>
+                        And we get our final rating:                        
+                      </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-12">
+                <img src="images/articles/prioritization/6.png" class="img-fluid">
+              </div>              
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 8. Demoing results</h3>
+                      <p>
+                        The final step of this drama is to show rating to the business team.<br>
+                        We've prepared another list where the System Areas are filtered ascending, based on the calculated rating.<br>
+                        Since this process was done iteratively, we've also calculated the coverage percent for each System Area.
+                        This was our regular report of progression.
+                      </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-12">
+                <img src="images/articles/prioritization/7.png" class="img-fluid">
+              </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+     <footer class="footer py-5">
+          <div class="container">
+               <div class="row">                   
+                    
+               </div>
+          </div>
+     </footer>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/Headroom.js"></script>
+    <script src="js/jQuery.headroom.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/smoothscroll.js"></script>
+    <script src="js/custom.js"></script>
+
+  </body>
+</html>
