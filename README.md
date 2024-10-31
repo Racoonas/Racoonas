@@ -1,5 +1,5 @@
 ## Hi there 👋
-## See my page at https://racoonas.github.io/Racoonas/
+## See my page at https://racoonas.github.io/racoonas/
 
 <!--
 **Racoonas/Racoonas** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
