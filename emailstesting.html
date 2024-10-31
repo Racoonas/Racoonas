@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Coverage Builder example</title>
+    <title>Emails testing example</title>
 
     <link rel="icon" type="image/png" href="images/favicon.png">
 
@@ -61,23 +61,109 @@
               <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
                 <div class="about-text">                        
                     <h1 class="animated animated-text">
-                        <span class="mr-2">Testing Emails</span>                                
+                        <span class="mr-2">Automating Emails testing</span>                                
                     </h1>
-                    <p> In this article, I'll explain how to build a simple mechanism to capture emails with SendGrid and Azure Functions</p>
+                    <p> In this article, I'll explain how to build a simple mechanism to capture emails with <span style="color: rgba(15, 103, 218, 0.712);">SendGrid</span> and <span style="color: rgba(15, 103, 218, 0.712);">Azure Functions</span>.</p>
                     <h3> 1. The Problem: </h3>
                       <p>
-                        Testing emails can be a pain. <br>
-                        Usually you look for some 3rd party mail service with an ability to create mailboxes on the fly and and API to read the email content.
+                        Automating emails testing can be a pain. <br>
+                        You could do it via some third-party mail service with an ability to create mailboxes on the fly and an API to read the email content. <br>
+                        There's plenty of tools like <a href="https://mailinator.com/">Mailinator</a>, <a href="mailgun.com">Mailgun</a> or <a href="https://app.mailslurp.com/"> Mailslurp </a>.
+                        <br>
+                        Yet in this example I'll demonstrate, how we've managed to build the reliable mechanism to capture emails, independent of libraries and tools, with no limitations on the number of mailboxes.<br>
+                        <br>
+                        <b>One important caveat:</b> SendGrid was used in our system to send emails. That's why it's not considered third-party tool.
                       </p>                      
                 </div>               
               </div>             
-            </div>            
+            </div>
+            
+            <div class="row">                
+                <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                  <div class="about-text">
+                      <h3> 2. Setting up SendGrid </h3>
+                        <p>
+                          <b>'Inbound Parse'</b> feature in Send Grid allows us to get emails as a raw-requests (see more on <a href="https://www.twilio.com/docs/sendgrid/ui/account-and-settings/inbound-parse"> Inbound Parse </a> page).  <br>
+                          <br>
+                          We've started from adding <b>Inbound Parse</b> setting into our Send Grid account. <br>
+                          Then we've added MX record: <span style="color: rgba(15, 103, 218, 0.712);">10 mx.sendgrid.net</span> for <b>qaauto.customer.com</b> in our DNS provider.
+                          Meaning all emails, which arrive to sub-domain qaauto.customer will be redirected to SendGrid.
+                          Each time Send Grid receives emails (sent to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>), it throws a raw-email to the specified url.
+                        </p>
+                  </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-12">
+                    <div class="about-image svg">
+                        <img src="images/articles/emailstesting/1.png" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                  <div class="about-text">
+                    <p>
+                      This url is a Function App address. <br>
+                      This app is running in Azure and processes the email-related data.
+                    </p>
+                  </div>
+                </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 3. Function App </h3>
+                      <p>
+                        Function App simply waits for the requests with email-data payload from SendGrid.<br>
+                        <br>
+                        Once function received the email, it parses and saves it to the storage account.
+                        The app code is ridiculously simple, and I've added it to the public repo <a href=""> here </a>.                        
+                      </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-12">
+                  <div class="about-image svg">
+                      <img src="images/articles/emailstesting/2.png" class="img-fluid">
+                  </div>
+               </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 4. Azure Storage Account</h3>
+                      <p>
+                        Azure Storage was used in our customer project. So setting up another storage account wasn't an issue.<br>
+                        We've chosen to use Azure tables to store raw email components.<br>
+                        Once email is in the storage Account table, we just needed to retrieve it from there.
+                        <br>
+                      </p>
+                </div>
+              </div>
+              <div class="col-lg-12 col-md-12 col-12">
+                  <div class="about-image svg">
+                      <img src="images/articles/emailstesting/3.png" class="img-fluid">
+                  </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 5. Azure Storage Table reading examples</h3>
+                      <p>
+                        Finally! <br>
+                        You can test this mechanism by sending email to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>. In several seconds email should appear in storage, dissected and saved to the table. <br>
+                        <br>
+                        I've added several examples of email reading from storage account table <a href="">here.</a><br>
+                      </p>
+                </div>
+              </div>
+            </div>
     </section>
 
     <!-- FOOTER -->
      <footer class="footer py-5">
           <div class="container">
-               <div class="row">                   
+               <div class="row">
                     
                </div>
           </div>
