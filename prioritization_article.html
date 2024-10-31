@@ -86,8 +86,7 @@
                 <div class="about-text">                                            
                     <h3> 2. Export data </h3>
                       <p>
-                        Test Cases exported into Google Spreadsheets. <br>
-                        That data is considered basis for further analysis.
+                        Test Cases exported into Google Spreadsheets.                        
                       </p>                                           
                 </div>               
               </div>              
@@ -104,7 +103,7 @@
                     <h3> 3. Create a ruleset </h3>
                       <p>
                         Combination of <b>System Risk</b> value and <b>Manual Effort</b> should then be considered by the team. <br>
-                        Subjectively, team assigns the <b>Automation Priority Result</b> to each combination. <br>
+                        Subjectively team assigns the <b>Automation Priority Result</b> to each combination. <br>
                         This way we get a ruleset which can later be used to mark test cases. 
                       </p>                                           
                 </div>
@@ -120,7 +119,7 @@
                     <h3> 4. Applying ruleset </h3>
                       <p>
                         Agreed ruleset is used to mark each test case. <br> 
-                        This is done with some wizardy around google spreadsheets formulas. 
+                        This is done with some wizardy around Google Spreadsheets formulas.
                         Mostly all work is done with INDEX() and MATCH() functions.
                       </p>                                           
                 </div>                
@@ -136,12 +135,12 @@
                     <h3> 5. Grouping cases by the area </h3>
                       <p>
                         In the next step, we'll group the test cases by the System Area property. <br>
-                        This is done on a separate list. <br>
-                        We will use UNIQUE() function to get a list of all possible System Areas. 
+                        This is done on a separate sheet. <br>
+                        We will use UNIQUE() function to get a list of all possible System Areas. <br>  
                         We will also count total number of cases in each group.
                       </p>                                           
                 </div>
-                <div class="col-lg-6 col-md-6 col-6">                  
+                <div class="col-lg-4 col-md-4 col-4">                  
                   <img src="images/articles/prioritization/4.png" class="img-fluid">
                 </div>
               </div>              
@@ -195,8 +194,9 @@
                     <h3> 8. Demoing results</h3>
                       <p>
                         The final step of this drama is to show rating to the business team.<br>
-                        We've prepared another list where the System Areas are filtered ascending, based on the calculated rating.<br>
-                        Since this process was done iteratively, we've also calculated the coverage percent for each System Area.
+                        We've prepared another sheet where the System Areas are filtered ascending, based on the calculated rating.<br>
+                        Since this process was done iteratively, we've also calculated the coverage percent for each System Area. 
+                        We've already calculated total number of cases and a number of covered test cases for each System Area, so was a simple task. <br>
                         This was our regular report of progression.
                       </p>
                 </div>
