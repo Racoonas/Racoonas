@@ -66,9 +66,9 @@
                     <p> In this article, I'll explain how to build a simple mechanism to capture emails with <span style="color: rgba(15, 103, 218, 0.712);">SendGrid</span> and <span style="color: rgba(15, 103, 218, 0.712);">Azure Functions</span>.</p>
                     <h3> 1. The Problem: </h3>
                       <p>
-                        Automating emails testing can be a pain. <br>
+                        Building solution for email test automation can be a pain. <br>
                         You could do it via some third-party mail service with an ability to create mailboxes on the fly and an API to read the email content. <br>
-                        There's plenty of tools like <a href="https://mailinator.com/">Mailinator</a>, <a href="mailgun.com">Mailgun</a> or <a href="https://app.mailslurp.com/"> Mailslurp </a>.
+                        There are plenty of tools like <a href="https://mailinator.com/">Mailinator</a>, <a href="mailgun.com">Mailgun</a> or <a href="https://app.mailslurp.com/"> Mailslurp </a>.
                         <br>
                         Yet in this example I'll demonstrate, how we've managed to build the reliable mechanism to capture emails, independent of libraries and tools, with no limitations on the number of mailboxes.<br>
                         <br>
@@ -87,8 +87,8 @@
                           <br>
                           We've started from adding <b>Inbound Parse</b> setting into our Send Grid account. <br>
                           Then we've added MX record: <span style="color: rgba(15, 103, 218, 0.712);">10 mx.sendgrid.net</span> for <b>qaauto.customer.com</b> in our DNS provider.
-                          Meaning all emails, which arrive to sub-domain qaauto.customer will be redirected to SendGrid.
-                          Each time Send Grid receives emails (sent to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>), it throws a raw-email to the specified url.
+                          Meaning all emails, which arrive to qaauto sub-domain of customer.com will be redirected to SendGrid.
+                          Each time SendGrid receives emails (sent to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>), it throws a raw-email to the specified url.
                         </p>
                   </div>
                 </div>
@@ -115,7 +115,7 @@
                         Function App simply waits for the requests with email-data payload from SendGrid.<br>
                         <br>
                         Once function received the email, it parses and saves it to the storage account.
-                        The app code is ridiculously simple, and I've added it to the public repo <a href=""> here </a>.                        
+                        The app code is ridiculously simple, and I've added it to the public repo <a href=""> here</a>.                        
                       </p>
                 </div>
               </div>
@@ -131,7 +131,7 @@
                 <div class="about-text">
                     <h3> 4. Azure Storage Account</h3>
                       <p>
-                        Azure Storage was used in our customer project. So setting up another storage account wasn't an issue.<br>
+                        Azure Storage was used in our customer project, thus setting up another storage account wasn't an issue.<br>
                         We've chosen to use Azure tables to store raw email components.<br>
                         Once email is in the storage Account table, we just needed to retrieve it from there.
                         <br>
@@ -151,9 +151,10 @@
                     <h3> 5. Azure Storage Table reading examples</h3>
                       <p>
                         Finally! <br>
-                        You can test this mechanism by sending email to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>. In several seconds email should appear in storage, dissected and saved to the table. <br>
+                        You can test this mechanism by sending email to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>. 
+                        In several seconds email should be processed by the function app and appear in storage table. <br>
                         <br>
-                        I've added several examples of email reading from storage account table <a href="">here.</a><br>
+                        I've added several examples in .NET for email reading from Storage Account table <a href="">here.</a><br>
                       </p>
                 </div>
               </div>
