@@ -71,7 +71,67 @@
                       </p>                      
                 </div>               
               </div>             
-            </div>            
+            </div> 
+            
+            <div class="row">                
+              <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+                <div class="about-text">
+                    <h3> 2. Preparation and Assumptions</h3>
+                      <p>                        
+                        For this article I've prepared a simple framework built upon <a href="https://playwright.dev/dotnet/">Playwright</span>, <a href="https://docs.nunit.org/">nUnit</span> and <a href="https://specflow.org/">Specflow</span> in C#.
+                        This framework is public free and available in <a href="https://github.com/Racoonas/Samples-TablesAutomation">Samples-TablesAutomation</a> repository.<br>
+                        This framework implies parallel test runs (by features). 
+                        It has appsettings configuration file, allowing users to select from headful/headless browser screenshots, capture screenshots, write traces and vides.
+                        Overall, this framework can be considered a draft for test automation setup.
+                        <br>
+                        In the article I'll be focusing only on the particular challenges and questions.<br>                        
+                      </p>
+                </div>
+              </div>              
+          </div>
+
+          <div class="row">                
+            <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+              <div class="about-text">
+                  <h3> 3. Target</h3>
+                    <p>                        
+                      I'll be using <a href="https://material.angular.io/components/table/overview">material.angular.io</a> table overview page for these examples.<br>
+                      <br>
+                      This page has good examples:<br>
+                      ● Simple table with headers<br>
+                      ● Table with sorting<br>
+                      ● Table with clickable rows<br>
+                    </p>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-12">
+              <div class="about-image svg">
+                  <img src="images/articles/tablesprocessing/1.png" class="img-fluid">
+              </div>
+          </div>            
+        </div>
+
+        <div class="row">                
+          <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+            <div class="about-text">
+                <h3> 4. Why SpecFlow?</h3>
+                  <p>                        
+                    It can be very tricky to create semantics around tables. 
+                    Here are some challenges:<br>
+                    ● Check if table has containing cells with particular texts.<br>
+                    ● Click into a row, containing cells with particular texts.<br>                    
+                    ● Check if table has proper headers.<br>
+                    ● Sort table and get all values from particular column.<br>
+                    <br>
+                    SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
+                    This provides us with a clear semantics.<br>                    
+                  </p>
+            </div>          
+          </div>          
+        </div>          
+          
+      </div>
+
     </section>
 
     <!-- FOOTER -->
