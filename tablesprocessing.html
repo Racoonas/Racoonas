@@ -9,12 +9,15 @@
     <title>Tables Automation</title>
 
     <link rel="icon" type="image/png" href="images/favicon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/unicons.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/owl.theme.default.min.css">    
+    <link rel="stylesheet" href="css/unicons.css">    
     <link rel="stylesheet" href="css/font-awesome.min.css">
+
+    <!-- CODE HIGHLIGHTER -->
+    <link rel="stylesheet" href="css/default.min.css">
+    
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css">
@@ -79,12 +82,8 @@
                     <h3> 2. Preparation and Assumptions</h3>
                       <p>                        
                         For this article I've prepared a simple framework built upon <a href="https://playwright.dev/dotnet/">Playwright</span>, <a href="https://docs.nunit.org/">nUnit</a> and <a href="https://specflow.org/">Specflow</a> in C#.
-                        This framework is public free and available in <a href="https://github.com/Racoonas/Samples-TablesAutomation">Samples-TablesAutomation</a> repository.<br>
-                        Framework has parallel test runs (organized by test features). 
-                        It has appsettings configuration file, allowing users to select from headful/headless browser screenshots, capture screenshots, write traces and videos.<br>
-                        Overall this framework can be considered a draft for test automation setup.
-                        <br>
-                        In the article I'll be focusing only on the particular challenges and questions.<br>                        
+                        This framework is public free and available in <a href="https://github.com/Racoonas/Samples-TablesAutomation">Samples-TablesAutomation</a> repository.
+                        This framework has some basic features and overall can be considered a draft for test automation setup.<br>                        
                       </p>
                 </div>
               </div>              
@@ -100,7 +99,7 @@
                       This page has good examples:<br>
                       ● Simple table with headers<br>
                       ● Table with sorting<br>
-                      ● Table with clickable rows<br>
+                      ● Table with clickable rows<br>                      
                     </p>
               </div>
             </div>
@@ -108,7 +107,12 @@
               <div class="about-image svg">
                   <img src="images/articles/tablesprocessing/1.png" class="img-fluid">
               </div>
-          </div>            
+            </div>
+            <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+              <div class="about-text">                  
+                    <p>&nbsp</p>
+              </div>
+            </div>
         </div>
 
         <div class="row">                
@@ -118,19 +122,86 @@
                   <p>                        
                     It can be very tricky to create semantics around tables. 
                     Here are some challenges:<br>
-                    ● Check if table has containing cells with particular texts.<br>
+                    ● Check if table contains cells with particular texts.<br>
                     ● Click into a row, containing cells with particular texts.<br>                    
                     ● Check if table has proper headers.<br>
                     ● Sort table and get all values from particular column.<br>
                     <br>
                     SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
-                    This provides us with a clear semantics.<br>
+                    This provides us with a high-level script semantics, which is clear to read and quick to digest.<br>                               
+                  </p>
+            </div>
+          </div>
+          <div class="col-lg-12 col-md-12 col-12">
+            <div class="about-image svg">
+                <img src="images/articles/tablesprocessing/3.png" class="img-fluid">
+            </div>
+          </div>
+        </div>          
+
+        <div class="row">                
+          <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+            <div class="about-text">
+                <h3> 5. To Battle!</h3>
+                  <p>                        
+                    These nice and readable SpecFlow tables are automatically converted into <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type.<br>
+                    However, on the .NET side, we also have <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type.<br>                    
                     <br>
-                    <b>To be continued...</b>
+                    Both types are good to store and toss table data around. Yet, I'd like to keep the standard .NET <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> in the framework.<br>
+                    So, on the test side, we would need to convert <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type to <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type inside step definitions.<br>                    
+                    Thus, adding the static table<a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs"> Converter</a> extension method to the test project.
+                    <pre>
+                      <code class = "language-csharp">
+    public static DataTable ToDataTable(this Table table)
+    {
+        var dataTable = new DataTable();
+        foreach (var header in table.Header)
+        {
+            dataTable.Columns.Add(header, typeof(string));
+        }
+
+        foreach (var row in table.Rows)
+        {
+            var newRow = dataTable.NewRow();
+            foreach (var header in table.Header)
+            {
+                newRow.SetField(header, row[header]);
+            }
+            dataTable.Rows.Add(newRow);
+        }
+        return dataTable;
+    }                    
+                      </code>
+                    </pre>
                   </p>
             </div>          
           </div>          
         </div>          
+
+        <div class="row">                
+          <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+            <div class="about-text">
+                <h3> 6. Next fight</h3>
+                  <p>                        
+                    Now we have to create a common utility class for reading tables from the page, returning row values, columns, etc...<br>
+                    For this purpose I've created <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.Framework/PageComponents/ItemsTable.cs"> ItemsTable</a> class.
+                    This class implies wrapping around the table container element (received as an argument in the constructor).<br>
+                    Class provides a number of simple locator-based methods.<br>
+                  </p>
+            </div>          
+          </div>          
+        </div>
+
+        <div class="row">                
+          <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+            <div class="about-text">
+                <h3> 7. Almost there</h3>
+                  <p>                        
+                    <b>TO BE DONE</b>
+                  </p>
+            </div>          
+          </div>          
+        </div>
           
       </div>
 
@@ -153,6 +224,8 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 
   </body>
 </html>
