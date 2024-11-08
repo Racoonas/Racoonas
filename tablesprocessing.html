@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/font-awesome.min.css">
 
     <!-- CODE HIGHLIGHTER -->
+    <link rel="stylesheet" href="css/default.css">
     <link rel="stylesheet" href="css/default.min.css">
     
 
@@ -66,11 +67,11 @@
                     <h1 class="animated animated-text">
                         <span class="mr-2">Tables Automation</span>                                
                     </h1>
-                    <p> This article will be dedicated to the semantic problem around tables in Web UI</p>
+                    <p> This article will be dedicated to the semantic problem around tables processing in Web UI Automated testing.</p>
                     <h3> 1. The Problem: </h3>
                       <p>
                         Creating Automation for tables in Web UI is quite challenging from semantical standpoing. <br>
-                        Usually it's quite hard to write readable tests when the steps or assertions require some actions in the table.
+                        Usually it's quite hard to write readable tests when the steps or assertions require some operations with the table.
                       </p>                      
                 </div>               
               </div>             
@@ -128,28 +129,30 @@
                     ● Sort table and get all values from particular column.<br>
                     <br>
                     SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
-                    This provides us with a high-level script semantics, which is clear to read and quick to digest.<br>                               
+                    This provides us with a high-level script semantics, which is clear to read and quick to digest:
+                    <pre>           
+                      <code class = "language-gherkin">       
+Given I entered the following data into the new account form:
+| Name      | Birthdate | Height In Inches | Bank Account Balance | # Header row (property names)
+| John Galt | 2/2/1902  | 72               | 1234.56              | # Data row (property values)
+                      </code>
+                    </pre>
                   </p>
             </div>
-          </div>
-          <div class="col-lg-12 col-md-12 col-12">
-            <div class="about-image svg">
-                <img src="images/articles/tablesprocessing/3.png" class="img-fluid">
-            </div>
-          </div>
+          </div>          
         </div>          
 
         <div class="row">                
           <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
             <div class="about-text">
-                <h3> 5. To Battle!</h3>
+                <h3> 5. Generic table type</h3>
                   <p>                        
                     These nice and readable SpecFlow tables are automatically converted into <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type.<br>
                     However, on the .NET side, we also have <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type.<br>                    
                     <br>
                     Both types are good to store and toss table data around. Yet, I'd like to keep the standard .NET <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> in the framework.<br>
                     So, on the test side, we would need to convert <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type to <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type inside step definitions.<br>                    
-                    Thus, adding the static table<a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs"> Converter</a> extension method to the test project.
+                    Thus, I added the static table <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs">ToDataTable</a> extension method to the test project.
                     <pre>
                       <code class = "language-csharp">
     public static DataTable ToDataTable(this Table table)
@@ -181,12 +184,11 @@
         <div class="row">                
           <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
             <div class="about-text">
-                <h3> 6. Next fight</h3>
+                <h3> 6. Reading table from the page</h3>
                   <p>                        
                     Now we have to create a common utility class for reading tables from the page, returning row values, columns, etc...<br>
                     For this purpose I've created <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.Framework/PageComponents/ItemsTable.cs"> ItemsTable</a> class.
-                    This class implies wrapping around the table container element (received as an argument in the constructor).<br>
-                    Class provides a number of simple locator-based methods.<br>
+                    Wrapped around the table container element, this class provides a number of simple locator-based methods.<br>
                   </p>
             </div>          
           </div>          
@@ -195,10 +197,23 @@
         <div class="row">                
           <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
             <div class="about-text">
-                <h3> 7. Almost there</h3>
+                <h3> 7. Scenario examples</h3>
                   <p>                        
-                    <b>TO BE DONE</b>
-                  </p>
+                    Finally, here's what a scenario might look like:                    
+                      <pre>           
+                        <code class = "language-gherkin">  
+Background: 
+Given I Navigate to Angular tables page
+And I wait until Angular tables page fully loaded                        
+                        
+Scenario: TableShouldHaveSpecificRows
+Then Basic table contains following rows:
+| No. | Name      | Weight | Symbol |
+| 1   | Hydrogen  | 1.0079 | H      |
+| 4   | Beryllium | 9.0122 | Be     |
+                      </code>
+                    </pre>                  
+                  </p>                  
             </div>          
           </div>          
         </div>
@@ -224,7 +239,7 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
-    <script src="js/highlight.min.js"></script>
+    <script src="js/highlight.js"></script>
     <script>hljs.highlightAll();</script>
 
   </body>
