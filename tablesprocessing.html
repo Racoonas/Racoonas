@@ -128,12 +128,12 @@
                   <p>                                            
                     SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
                     This provides us with a high-level script semantics, which is clear to read and quick to digest:
+                  </p>
 <pre><code class = "language-gherkin">       
 Given I entered the following data into the new account form:
-| Name      | Birthdate | Height In Inches | Bank Account Balance | # Header row (property names)
-| John Galt | 2/2/1902  | 72               | 1234.56              | # Data row (property values)
-</code></pre>
-                  </p>
+| Name      | Birthdate | Height In Inches | Bank Account Balance
+| John Galt | 2/2/1902  | 72               | 1234.56             
+</code></pre>                  
             </div>
           </div>          
         </div>          
@@ -149,6 +149,7 @@ Given I entered the following data into the new account form:
                     Both types are good to store and toss table data around. Yet, I'd like to keep the standard .NET <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> in the framework.<br>
                     So, on the test side, we would need to convert <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type to <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type inside step definitions.<br>                    
                     Thus, I added <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs">ToDataTable</a> extension method to the test project.
+                  </p>
 <pre><code class = "language-csharp">
 public static DataTable ToDataTable(this Table table)
 {
@@ -169,8 +170,7 @@ public static DataTable ToDataTable(this Table table)
     }
     return dataTable;
 }
-</code></pre>
-                  </p>
+</code></pre>                  
             </div>          
           </div>          
         </div>          
@@ -188,41 +188,40 @@ public static DataTable ToDataTable(this Table table)
                     Here's a piece:
                   </p>
 <pre><code class = "language-csharp">
-  public class ItemsTable
+public class ItemsTable
+{
+  private IPage _page;
+  private ILocator _tableContainer;
+
+  public ItemsTable(IPage page, ILocator container)
   {
-      private IPage _page;
-      private ILocator _tableContainer;
-  
-      public ItemsTable(IPage page, ILocator container)
+      _page = page;
+      _tableContainer = container;
+  }
+
+  /// &lt;summary&gt;
+  /// Read the table from the page, convert to DataTable
+  /// &lt;/summary&gt;
+  /// &lt;returns&gt;&lt;/returns&gt;
+  public async Task&lt;DataTable&gt; AsDataTable()
+  {
+      var dataTable = new DataTable();
+
+      var headers = await GetHeaders();
+      var rows = await GetAllRowValues();
+
+      foreach (var header in headers)
       {
-          _page = page;
-          _tableContainer = container;
+          dataTable.Columns.Add(header);
       }
-           
-      /// <summary>
-      /// Read the table from the page, convert to DataTable
-      /// </summary>
-      /// <returns></returns>
-      public async Task<DataTable> AsDataTable()
+
+      foreach (var row in rows)
       {
-          var dataTable = new DataTable();
-  
-          var headers = await GetHeaders();
-          var rows = await GetAllRowValues();
-  
-          foreach (var header in headers)
-          {
-              dataTable.Columns.Add(header);
-          }
-  
-          foreach (var row in rows)
-          {
-              dataTable.Rows.Add(row.Select(val => val.ToString()).ToArray());
-          }
-  
-          return dataTable;
-      } 
-</code></pre>
+          dataTable.Rows.Add(row.Select(val => val.ToString()).ToArray());
+      }
+
+      return dataTable;
+  }</code></pre>
             </div>          
           </div>          
         </div>
@@ -294,11 +293,13 @@ public static void ShouldContainRows(this DataTable actualTable, DataTable expec
         {
             var expectedColumnName = column.ColumnName;
             var expectedValue = row[expectedColumnName];
-            var rowsFound = actualTable.AsEnumerable().Where(row => row[expectedColumnName].ToString().Equals(expectedValue)); //We are operating with string-type expected values only currently
+            var rowsFound = actualTable.AsEnumerable()
+                                       .Where(row => row[expectedColumnName].ToString().Equals(expectedValue)); 
 
             if (!rowsFound.Any())
             {
-                throw new InvalidOperationException($"Couldn't find following row in Data Table: {Environment.NewLine}{string.Join(", ", row.ItemArray)}. " +
+                throw new InvalidOperationException($"Couldn't find following row in Data Table: 
+                    {Environment.NewLine}{string.Join(", ", row.ItemArray)}. " +
                     $"{Environment.NewLine} Check column: {expectedColumnName}");
             }
         }
