@@ -16,6 +16,10 @@
 
     <!-- MAIN STYLE -->
     <link rel="stylesheet" href="css/tooplate-style.css">
+
+    <!-- CODE HIGHLIGHTER -->
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/default.min.css">
     
   </head>
   <body>
@@ -33,20 +37,20 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <a href="index.html#about" class="nav-link"><span data-hover="Me">About</span></a>
-                    </li>
-                    <li class="nav-item">
-                      <a href="index.html#resume" class="nav-link"><span data-hover="Skills">Experience</span></a>
-                    </li>                    
-                    <li class="nav-item">
-                        <a href="index.html#project" class="nav-link"><span data-hover="Real">Examples</span></a>
-                    </li>                    
-                    <li class="nav-item">
-                        <a href="index.html#contact" class="nav-link"><span data-hover="Info">Contact</span></a>
-                    </li>
-                </ul>
+              <ul class="navbar-nav mx-auto">
+                  <li class="nav-item">
+                      <a href="index.html#about" class="nav-link"><span data-hover="Me">About</span></a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="index.html#resume" class="nav-link"><span data-hover="Skills">Experience</span></a>
+                  </li>                    
+                  <li class="nav-item">
+                      <a href="index.html#project" class="nav-link"><span data-hover="Work">Examples</span></a>
+                  </li>                    
+                  <li class="nav-item">
+                      <a href="index.html#contact" class="nav-link"><span data-hover="Info">Contact</span></a>
+                  </li>
+              </ul>
             </div>
         </div>
     </nav>
@@ -61,7 +65,7 @@
                     <h1 class="animated animated-text">
                         <span class="mr-2">Automating Email tests</span>                                
                     </h1>
-                    <p> In this article, I'll explain how to build a simple mechanism to capture emails with <span style="color: rgba(15, 103, 218, 0.712);">SendGrid</span> and <span style="color: rgba(15, 103, 218, 0.712);">Azure Functions</span>.</p>
+                    <p> In this article, I'll explain how to build a simple mechanism to capture emails with <span style="color: rgba(1, 168, 113, 0.712);">SendGrid</span> and <span style="color: rgba(1, 168, 113, 0.712);">Azure Functions</span>.</p>
                     <h3> 1. The Problem: </h3>
                       <p>
                         Building solution for email test automation can be a pain. <br>
@@ -84,9 +88,9 @@
                           <b>'Inbound Parse'</b> feature in Send Grid allows us to get emails as a raw-requests (see more on <a href="https://www.twilio.com/docs/sendgrid/ui/account-and-settings/inbound-parse"> Inbound Parse </a> page).  <br>
                           <br>
                           We've started from adding <b>Inbound Parse</b> setting into our Send Grid account. <br>
-                          Then we've added MX record: <span style="color: rgba(15, 103, 218, 0.712);">10 mx.sendgrid.net</span> for <b>qaauto.customer.com</b> in our DNS provider.
+                          Then we've added MX record: <span style="color: rgba(1, 168, 113, 0.712);">10 mx.sendgrid.net</span> for <b>qaauto.customer.com</b> in our DNS provider.<br>
                           Meaning all emails, which arrive to qaauto sub-domain of customer.com will be redirected to SendGrid.
-                          Each time SendGrid receives emails (sent to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>), it throws a raw-email to the specified url.
+                          And each time SendGrid receives emails (sent to <span style="color: rgba(1, 168, 113, 0.712);">whatever@qaauto.customer.com</span>), it throws a raw-email to the specified url.
                         </p>
                   </div>
                 </div>
@@ -149,11 +153,47 @@
                     <h3> 5. Azure Storage Table reading examples</h3>
                       <p>
                         Finally! <br>
-                        You can test this mechanism by sending email to <span style="color: rgba(15, 103, 218, 0.712);">whatever@qaauto.customer.com</span>. 
+                        You can test this mechanism by sending email to <span style="color: rgba(1, 168, 113, 0.712);">whatever@qaauto.customer.com</span>. 
                         In several seconds email should be processed by the function app and appear in storage table. <br>
                         <br>
-                        I've added several examples in .NET for email reading from Storage Account table <a href="">here.</a><br>
+                        Here's a very simple client to read the emails from Table storage:
                       </p>
+<pre><code class = "language-csharp">
+public class EmailCapture
+{        
+    private TableClient tableClient;
+
+    public EmailCapture(string connectionString, string tableName)
+    {            
+        tableClient = new TableServiceClient(connectionString).GetTableClient(tableName);
+    }
+
+    public List<Email> GetEmails(string filter) 
+    {         
+        var entities = tableClient.Query<Email>(filter);
+        return entities.ToList();            
+    }
+
+    public class Email : ITableEntity
+    {
+        public string PartitionKey { get; set; }
+        public string RowKey { get; set; }
+        public DateTimeOffset? Timestamp { get; set; }
+        public ETag ETag { get; set; }
+        public string To { get; set; }
+        public string From {get; set;}            
+        public string Subject { get; set; }
+        public string Text { get; set; }
+        public string Html { get; set; }
+    }
+}
+</code></pre>
+                <p>
+                  Notice filter parameter in the <span style="color: rgba(1, 168, 113, 0.712);"> GetEmails </span> method.<br>
+                  Here's one example of the filter: <i><span style="color: rgba(1, 168, 113, 0.712);">To eq 'whatever@qaauto.customer.com' and Subject eq 'Invitation email'</span>.</i><br>
+                  Yiu can learn more about TableServiceClient.Query Method and filtering in <a href = "https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.tableserviceclient.query?view=azure-dotnet">learn.microsoft.com</a>
+                </p>
+
                 </div>
               </div>
             </div>
@@ -176,6 +216,8 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/smoothscroll.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/highlight.js"></script>
+    <script>hljs.highlightAll();</script>
 
   </body>
 </html>
