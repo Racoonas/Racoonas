@@ -130,13 +130,11 @@
                     <br>
                     SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
                     This provides us with a high-level script semantics, which is clear to read and quick to digest:
-                    <pre>           
-                      <code class = "language-gherkin">       
+<pre><code class = "language-gherkin">       
 Given I entered the following data into the new account form:
 | Name      | Birthdate | Height In Inches | Bank Account Balance | # Header row (property names)
 | John Galt | 2/2/1902  | 72               | 1234.56              | # Data row (property values)
-                      </code>
-                    </pre>
+</code></pre>
                   </p>
             </div>
           </div>          
@@ -153,29 +151,27 @@ Given I entered the following data into the new account form:
                     Both types are good to store and toss table data around. Yet, I'd like to keep the standard .NET <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> in the framework.<br>
                     So, on the test side, we would need to convert <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type to <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type inside step definitions.<br>                    
                     Thus, I added the static table <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs">ToDataTable</a> extension method to the test project.
-                    <pre>
-                      <code class = "language-csharp">
-    public static DataTable ToDataTable(this Table table)
+<pre><code class = "language-csharp">
+public static DataTable ToDataTable(this Table table)
+{
+    var dataTable = new DataTable();
+    foreach (var header in table.Header)
     {
-        var dataTable = new DataTable();
+        dataTable.Columns.Add(header, typeof(string));
+    }
+
+    foreach (var row in table.Rows)
+    {
+        var newRow = dataTable.NewRow();
         foreach (var header in table.Header)
         {
-            dataTable.Columns.Add(header, typeof(string));
+            newRow.SetField(header, row[header]);
         }
-
-        foreach (var row in table.Rows)
-        {
-            var newRow = dataTable.NewRow();
-            foreach (var header in table.Header)
-            {
-                newRow.SetField(header, row[header]);
-            }
-            dataTable.Rows.Add(newRow);
-        }
-        return dataTable;
-    }                    
-                      </code>
-                    </pre>
+        dataTable.Rows.Add(newRow);
+    }
+    return dataTable;
+}
+</code></pre>
                   </p>
             </div>          
           </div>          
@@ -199,21 +195,81 @@ Given I entered the following data into the new account form:
             <div class="about-text">
                 <h3> 7. Scenario examples</h3>
                   <p>                        
-                    Finally, here's what a scenario might look like:                    
-                      <pre>           
-                        <code class = "language-gherkin">  
-Background: 
-Given I Navigate to Angular tables page
-And I wait until Angular tables page fully loaded                        
-                        
+                    Finally, here's what a scenario might look like:
+                  </p>                    
+<pre><code class = "language-gherkin">
 Scenario: TableShouldHaveSpecificRows
 Then Basic table contains following rows:
 | No. | Name      | Weight | Symbol |
 | 1   | Hydrogen  | 1.0079 | H      |
 | 4   | Beryllium | 9.0122 | Be     |
-                      </code>
-                    </pre>                  
-                  </p>                  
+</code></pre>
+                <p>                        
+                  <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/Steps/BasicTableSteps.cs">Step Definition</a> logic has 3 main blocks:<br>
+                  - Read the table from the page (via ItemsTable wrapper) as an actual <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span><br>
+                  - Convert the argument as an expected <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span><br>
+                  - Assert that actual table contains rows from the expected table<br>
+                </p>
+<pre><code class = "language-csharp">
+[Then(@"Basic table contains following rows:")]
+public async Task TableHasRows(Table expectedTable)
+{
+    if (expectedTable.RowCount == 0) throw new ArgumentException("At least one row should be specified");
+
+    var tablesPage = new TablesPage(_page);
+    await tablesPage.BasicTable.WaitForAsync();
+
+    //Getting actual data table from the page:
+    var actualDataTable = await tablesPage.GetBasicTable().AsDataTable();
+
+    //Converting expected table into DataTable:
+    var expectedDataTable = expectedTable.ToDataTable();
+
+    //Comparing 2 tables:
+    actualDataTable.ShouldContainRows(expectedDataTable);
+}
+</code></pre>
+                <p>                        
+                  Find more examples in the <a href="https://github.com/Racoonas/Samples-TablesAutomation/tree/main/TablesAutomation.E2E.FeaturedTests/Features">Features</a><br>
+                </p>                                    
+            </div>          
+          </div>          
+        </div>
+
+        <div class="row">                
+          <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
+            <div class="about-text">
+                <h3> 8. One last touch</h3>
+                  <p>                        
+                    Let's imagine the table on your page has a cell with a randomly generated data, but the other cells are static and well-predicted.
+                    You'd like to check the table for all expected values, but ommit the randomly generated cell.<br>
+                    <br>
+                    For these reasons, I've implemented these handy 'partial row comparing' <a href="https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.Framework/Utils/DataRowPartialComparer.cs">methods</a>:                    
+                  </p>
+<pre><code class = "language-csharp">
+public static void ShouldContainRows(this DataTable actualTable, DataTable expectedTable)
+{
+    var expectedTableColumns = expectedTable.Columns;
+
+    foreach (var row in expectedTable.AsEnumerable())
+    {
+        foreach (DataColumn column in expectedTableColumns)
+        {
+            var expectedColumnName = column.ColumnName;
+            var expectedValue = row[expectedColumnName];
+            var rowsFound = actualTable.AsEnumerable().Where(row => row[expectedColumnName].ToString().Equals(expectedValue)); //We are operating with string-type expected values only currently
+
+            if (!rowsFound.Any())
+            {
+                throw new InvalidOperationException($"Couldn't find following row in Data Table: {Environment.NewLine}{string.Join(", ", row.ItemArray)}. " +
+                    $"{Environment.NewLine} Check column: {expectedColumnName}");
+            }
+        }
+
+    }
+}
+  </code></pre>
+
             </div>          
           </div>          
         </div>
