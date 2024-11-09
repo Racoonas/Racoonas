@@ -71,7 +71,13 @@
                     <h3> 1. The Problem: </h3>
                       <p>
                         Creating Automation for tables in Web UI is quite challenging from semantical standpoing. <br>
-                        Usually it's quite hard to write readable tests when the steps or assertions require some operations with the table.
+                        Usually it's quite hard to write short and clean tests when the steps or assertions require some operations with the tables.<br>
+                        <br>
+                        Here are several challenges:<br>
+                        ● Check if table contains cells with particular texts.<br>
+                        ● Click into a row, containing cells with particular texts.<br>                    
+                        ● Check if table has proper headers.<br>
+                        ● Sort table and get all values from particular column.<br>
                       </p>                      
                 </div>               
               </div>             
@@ -120,14 +126,7 @@
           <div class="col-lg-12 col-md-12 col-12 d-flex align-items-center">
             <div class="about-text">
                 <h3> 4. Why SpecFlow?</h3>
-                  <p>                        
-                    It can be very tricky to create semantics around tables. 
-                    Here are some challenges:<br>
-                    ● Check if table contains cells with particular texts.<br>
-                    ● Click into a row, containing cells with particular texts.<br>                    
-                    ● Check if table has proper headers.<br>
-                    ● Sort table and get all values from particular column.<br>
-                    <br>
+                  <p>                                            
                     SpecFlow has an inbuilt support for Vertical and Horizontal tables (see more <a href="https://docs.specflow.org/projects/specflow/en/latest/Bindings/SpecFlow-Assist-Helpers.html">here</a>).<br>
                     This provides us with a high-level script semantics, which is clear to read and quick to digest:
 <pre><code class = "language-gherkin">       
@@ -150,7 +149,7 @@ Given I entered the following data into the new account form:
                     <br>
                     Both types are good to store and toss table data around. Yet, I'd like to keep the standard .NET <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> in the framework.<br>
                     So, on the test side, we would need to convert <span style="color: rgba(1, 168, 113, 0.712);">Techtalk.Specflow.Table</span> type to <span style="color: rgba(1, 168, 113, 0.712);">System.Data.DataTable</span> type inside step definitions.<br>                    
-                    Thus, I added the static table <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs">ToDataTable</a> extension method to the test project.
+                    Thus, I added <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.FeaturedTests/SpecflowTableTypes/DataTableConverter.cs">ToDataTable</a> extension method to the test project.
 <pre><code class = "language-csharp">
 public static DataTable ToDataTable(this Table table)
 {
@@ -182,10 +181,49 @@ public static DataTable ToDataTable(this Table table)
             <div class="about-text">
                 <h3> 6. Reading table from the page</h3>
                   <p>                        
-                    Now we have to create a common utility class for reading tables from the page, returning row values, columns, etc...<br>
+                    Now we have to create a common utility for reading tables from the page, returning row values, columns, etc...<br>
                     For this purpose I've created <a href = "https://github.com/Racoonas/Samples-TablesAutomation/blob/main/TablesAutomation.E2E.Framework/PageComponents/ItemsTable.cs"> ItemsTable</a> class.
                     Wrapped around the table container element, this class provides a number of simple locator-based methods.<br>
+                    Also, this is an example of decomposition, since this wrapper can be used for any table in any page.<br>
+                    <br>
+                    Here's a piece:
                   </p>
+<pre><code class = "language-csharp">
+  public class ItemsTable
+  {
+      private IPage _page;
+      private ILocator _tableContainer;
+  
+      public ItemsTable(IPage page, ILocator container)
+      {
+          _page = page;
+          _tableContainer = container;
+      }
+           
+      /// <summary>
+      /// Read the table from the page, convert to DataTable
+      /// </summary>
+      /// <returns></returns>
+      public async Task<DataTable> AsDataTable()
+      {
+          var dataTable = new DataTable();
+  
+          var headers = await GetHeaders();
+          var rows = await GetAllRowValues();
+  
+          foreach (var header in headers)
+          {
+              dataTable.Columns.Add(header);
+          }
+  
+          foreach (var row in rows)
+          {
+              dataTable.Rows.Add(row.Select(val => val.ToString()).ToArray());
+          }
+  
+          return dataTable;
+      } 
+</code></pre>
             </div>          
           </div>          
         </div>
@@ -195,7 +233,7 @@ public static DataTable ToDataTable(this Table table)
             <div class="about-text">
                 <h3> 7. Scenario examples</h3>
                   <p>                        
-                    Finally, here's what a scenario might look like:
+                    Finally, here's what a test scenario might look like:
                   </p>                    
 <pre><code class = "language-gherkin">
 Scenario: TableShouldHaveSpecificRows
