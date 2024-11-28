@@ -1,5 +1,4 @@
-## Hi
-## I'm Dmytro and this is my collection of repos
+## Hi. I'm Dmytro and this is my collection of repos
 ## See my professional page at https://racoonas.github.io/Racoonas/
 
 <!--
