@@ -102,7 +102,7 @@ b, strong {
   display: inline-block;
   vertical-align: top;
   margin-top: 5px;
-  min-width: 450px;
+  min-width: 550px;
   position: relative;
 }
 
@@ -432,7 +432,7 @@ b, strong {
     padding: 3px 20px;
   }
 }
-@media (max-width: 580px) {
+@media (max-width: 600px) {
 	.animated-info {
 		min-width: 200px;
     min-height: 100px;
@@ -459,7 +459,7 @@ b, strong {
     margin: 10px 0 0 0;
   }
 }
-@media (max-width: 320px) {
+@media (max-width: 700px) {
   .animated-text {
     margin-top: 0;
   }
